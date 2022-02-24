@@ -23,14 +23,14 @@ println('Java: ' + System.getProperty('java.version') +
 
 loom {
     runs {
-        it.configure {
-            client {
-                runDir = Boolean.parseBoolean(System.getenv("FABRIC_SERVER") ?: "false") ? "run-server" : "run"
-                programArgs(List.of("--username", "Kotori"))
-            }
-            server {
-                runDir = "run-server"
-            }
+        client {
+            name "Client"
+            runDir = Boolean.parseBoolean(System.getenv("FABRIC_SERVER") ?: "false") ? "run-server" : "run"
+            programArgs(List.of("--username", "Kotori"))
+        }
+        server {
+            name "Server"
+            runDir = "run-server"
         }
     }
 }
@@ -42,6 +42,12 @@ repositories {
     }
 }
 
+java {
+    withSourcesJar()
+    toolchain {
+        it.languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -59,6 +65,7 @@ dependencies {
 }
 
 processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
@@ -99,7 +106,7 @@ jar {
 // This is the preferred method to reobfuscate your jar file
 build.finalizedBy('signJar')
 
-task signJar(dependsOn: 'jar') {
+task signJar(dependsOn: 'remapJar') {
     boolean executeCondition = project.hasProperty('keyStoreAlias') &&
             project.hasProperty('keyStore') &&
             project.hasProperty('keyStorePass')
@@ -130,8 +137,9 @@ curseforge {
                 "For Minecraft $minecraftVersion, built with $v"
         releaseType = 'release'
         addGameVersion '1.18.1'
-        addGameVersion 'Forge'
-        mainArtifact jar
+        addGameVersion 'Fabric'
+        mainArtifact remapJar
+        addArtifact jar
     }
     options {
         curseGradleOptions.debug = false // defaults to false
@@ -152,6 +160,11 @@ publishing {
                 description = "LimitMobSpawn for Minecraft $minecraftVersion, build with Fabric $v"
                 url = 'https://github.com/Kotori316/LimitMobSpawn'
                 packaging = "jar"
+                withXml {
+                    (asNode() as Node).dependencies.'*'.findAll() { Node node ->
+                        node.parent().remove(node)
+                    }
+                }
             }
         }
     }
