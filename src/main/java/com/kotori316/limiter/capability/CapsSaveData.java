@@ -15,6 +15,7 @@ public final class CapsSaveData extends SavedData {
 
     public CapsSaveData(LMSHandler handler) {
         this.handler = handler;
+        this.handler.setSaveCallBack(l -> this.setDirty());
     }
 
     public CapsSaveData(CompoundTag tag) {

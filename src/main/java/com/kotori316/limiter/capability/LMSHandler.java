@@ -3,6 +3,7 @@ package com.kotori316.limiter.capability;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -72,5 +73,8 @@ public interface LMSHandler {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     static Stream<TestSpawn> getCombinedForce(LMSHandler h1, Optional<LMSHandler> h2) {
         return Stream.concat(h1.getForceConditions().stream(), h2.map(LMSHandler::getForceConditions).stream().flatMap(Collection::stream));
+    }
+
+    default void setSaveCallBack(Consumer<LMSHandler> saveCallBack) {
     }
 }
