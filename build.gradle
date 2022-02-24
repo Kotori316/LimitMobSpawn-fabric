@@ -1,7 +1,9 @@
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.stream.Collectors
 
 plugins {
     id("maven-publish")
@@ -13,8 +15,6 @@ plugins {
 version = '18.1-fabric'
 group = 'com.kotori316' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'LimitMobSpawn'
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') +
         ' JVM: ' + System.getProperty('java.vm.version') +
@@ -97,33 +97,13 @@ def jarAttributeMap = [
         'Automatic-Module-Name'   : 'limitmobspawn',
 ]
 jar {
+    from "LICENSE"
     manifest {
         attributes(jarAttributeMap)
     }
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-build.finalizedBy('signJar')
-
-task signJar(dependsOn: 'remapJar') {
-    boolean executeCondition = project.hasProperty('keyStoreAlias') &&
-            project.hasProperty('keyStore') &&
-            project.hasProperty('keyStorePass')
-    onlyIf { executeCondition }
-    doLast {
-        //noinspection HttpUrlsUsage
-        ant.signjar(
-                jar: jar.archiveFile.get(),
-                alias: project.hasProperty('keyStoreAlias') ? project.getProperty('keyStoreAlias') : "",
-                keystore: project.hasProperty('keyStore') ? project.getProperty("keyStore") : "",
-                storepass: project.hasProperty('keyStorePass') ? project.getProperty('keyStorePass') : "",
-                sigalg: "SHA1withRSA",
-                digestalg: "SHA-256",
-                tsaurl: "http://timestamp.digicert.com"
-        )
-    }
-}
+static def BRANCH() { return "1.18-fabric" }
 
 curseforge {
     String v = project.fabric_version
@@ -133,9 +113,9 @@ curseforge {
     project {
         id = '449932'
         changelogType = 'markdown'
-        changelog = file.exists() ? file.text : "See https://github.com/Kotori316/LimitMobSpawn/commits/master for change log." + System.lineSeparator() * 2 +
+        changelog = file.exists() ? file.text : "See https://github.com/Kotori316/LimitMobSpawn/commits/${BRANCH()} for change log." + System.lineSeparator() * 2 +
                 "For Minecraft $minecraftVersion, built with $v"
-        releaseType = 'release'
+        releaseType = 'beta'
         addGameVersion '1.18.1'
         addGameVersion 'Fabric'
         mainArtifact remapJar
@@ -199,5 +179,39 @@ task copyToDrive(type: Copy, dependsOn: "build") {
     onlyIf {
         System.getenv(PATH_NAME) != null &&
                 Files.exists(Paths.get(System.getenv(PATH_NAME)))
+    }
+}
+
+task checkCompileOption() {
+    doLast {
+        List<String> strings = new ArrayList<>()
+        strings.add("archivesBaseName: $archivesBaseName")
+        strings.add("group: $group")
+        strings.add("BRANCH: ${BRANCH()}")
+        strings.add("project.group: ${project.group}")
+        strings.add("version: $version")
+        strings.add("Display name: ${"v" + project.version + "-fabric" + " [${project.minecraft_version}]"}")
+        strings.add("runs: ${loom.getRunConfigs().asMap.toMapString()}")
+        strings.add("Absolute Client RunDir: ${project.projectDir.toPath().resolve(loom.getRunConfigs().getByName("client").runDir).toAbsolutePath()}")
+        strings.add("Absolute Server RunDir: ${project.projectDir.toPath().resolve(loom.getRunConfigs().getByName("server").runDir).toAbsolutePath()}")
+        strings.add("-" * 20)
+        strings.add("Jar: ${jar.getArchiveFile().get()}")
+        strings.add("Remap Jar ${remapJar.getArchiveFile().get()}")
+        strings.add("RemapSource Jar ${remapSourcesJar.getArchiveFile().get()}")
+        strings.add(String.valueOf(fileTree("build/libs").getFiles()))
+        strings.add("-" * 20)
+        strings.add("Now: " + ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT))
+        strings.add("Now in Japan: " + ZonedDateTime.now().withZoneSameInstant(ZoneId.of("Asia/Tokyo")).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+        strings.add("-" * 20)
+        strings.add("Repositories")
+        for (def r : project.getRepositories()) {
+            strings.add("${r.name} $r ${r instanceof MavenArtifactRepository ? r.getUrl() : "Not maven " + r.getClass()}")
+        }
+
+        System.out.println(strings.stream().collect(Collectors.joining(System.lineSeparator())))
+        System.out.println("*" * 20 as String)
+        System.out.println("ChangeLog")
+        def f = file("changelog.md")
+        System.out.println(f.exists() ? f.text : "No changelog")
     }
 }

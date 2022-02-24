@@ -11,7 +11,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     container:
@@ -19,12 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Test with Gradle
-        run: ./gradlew test
+        run: chmod +x ./gradlew
+      - name: Check Setting
+        run: ./gradlew javaToolchains checkCompileOption
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Check Artifacts
+        run: ls -al build/libs/
       - name: Upload failed test report
         if: failure()
         uses: actions/upload-artifact@v2
         with:
           path: build/reports/tests/*
-          name: Test-Report
+          name: Test-Report-${{ github.run_number }}
