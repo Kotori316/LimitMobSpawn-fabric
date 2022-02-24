@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -16,19 +14,21 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.kotori316.limiter.LimitMobSpawn;
 import com.kotori316.limiter.TestSpawn;
 
-public record BiomeLimit(@Nonnull ResourceKey<Biome> biomeResourceKey) implements TestSpawn {
+public record BiomeLimit(@NotNull ResourceKey<Biome> biomeResourceKey) implements TestSpawn {
     public static final TestSpawn.Serializer<BiomeLimit> SERIALIZER = new BiomeSerializer();
 
-    public BiomeLimit(@Nonnull ResourceKey<Biome> biomeResourceKey) {
+    public BiomeLimit(@NotNull ResourceKey<Biome> biomeResourceKey) {
         this.biomeResourceKey = biomeResourceKey;
         LimitMobSpawn.LOGGER.debug(TestSpawn.MARKER, getClass().getSimpleName() + " Instance created with {}", biomeResourceKey);
     }
 
-    public BiomeLimit(@Nonnull ResourceLocation biome) {
+    public BiomeLimit(@NotNull ResourceLocation biome) {
         this(ResourceKey.create(Registry.BIOME_REGISTRY, biome));
     }
 

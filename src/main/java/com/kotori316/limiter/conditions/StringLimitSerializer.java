@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.commands.SharedSuggestionProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.kotori316.limiter.TestSpawn;
 
@@ -73,7 +73,7 @@ public abstract class StringLimitSerializer<T extends TestSpawn, Value> extends 
     public static <Type extends TestSpawn, Value> StringLimitSerializer<Type, Value> fromFunction(
         Function<Type, Value> getter, Function<Value, Type> instance,
         Function<Value, String> asString, Function<String, Value> fromString,
-        String saveKey, String typeName, @Nonnull Supplier<Value[]> valueSupplier
+        String saveKey, String typeName, @NotNull Supplier<Value[]> valueSupplier
     ) {
         return new StringLimitSerializer<>() {
             @Override

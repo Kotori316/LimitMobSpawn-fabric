@@ -3,8 +3,8 @@ package com.kotori316.limiter.capability;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 import com.kotori316.limiter.TestSpawn;
 
@@ -63,15 +63,15 @@ public class LMSDataPackHolder implements LMSHandler {
         return forceSet;
     }
 
-    public void setDenySet(@Nonnull Set<TestSpawn> denySet) {
+    public void setDenySet(@NotNull Set<TestSpawn> denySet) {
         this.denySet = denySet;
     }
 
-    public void setDefaultSet(@Nonnull Set<TestSpawn> defaultSet) {
+    public void setDefaultSet(@NotNull Set<TestSpawn> defaultSet) {
         this.defaultSet = defaultSet;
     }
 
-    public void setForceSet(@Nonnull Set<TestSpawn> forceSet) {
+    public void setForceSet(@NotNull Set<TestSpawn> forceSet) {
         this.forceSet = forceSet;
     }
 

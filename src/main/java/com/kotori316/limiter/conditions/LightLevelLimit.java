@@ -9,7 +9,6 @@ import java.util.stream.IntStream;
 
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
-import javax.annotation.Nullable;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
@@ -17,6 +16,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LightLayer;
+import org.jetbrains.annotations.Nullable;
 
 import com.kotori316.limiter.LimitMobSpawn;
 import com.kotori316.limiter.TestSpawn;

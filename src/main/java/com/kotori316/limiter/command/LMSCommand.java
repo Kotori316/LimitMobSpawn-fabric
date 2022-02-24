@@ -11,11 +11,11 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import javax.annotation.Nonnull;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import com.kotori316.limiter.Config;
 import com.kotori316.limiter.LimitMobSpawn;
@@ -121,7 +121,7 @@ public class LMSCommand {
         conditions.stream().map(Object::toString).map(TextComponent::new).forEach(c -> context.getSource().sendSuccess(c, true));
     }
 
-    @Nonnull
+    @NotNull
     private static LMSHandler getLmsHandler(CommandContext<CommandSourceStack> context) {
         Level world = context.getSource().getLevel();
         return world.getCapability(Caps.getLmsCapability()).orElseGet(LMSConditionsHolder::new);
