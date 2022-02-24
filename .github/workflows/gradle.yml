@@ -5,20 +5,15 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "*-fabric" ]
   pull_request:
-    branches: [ master ]
+    branches: [ "*-fabric" ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
-    container:
-      image: ghcr.io/kotori316/fictional-meme/fictional-meme:1.18.1
-      credentials:
-        username: kotori316
-        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - name: Grant execute permission for gradlew

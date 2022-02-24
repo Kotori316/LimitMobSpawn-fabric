@@ -68,9 +68,12 @@
       "type": "entity"
     }
   ],
-  "conditions": [
+  "fabric:load_conditions": [
     {
-      "type": "forge:false"
+      "condition": "fabric:not",
+      "value": {
+        "condition": "limitmobspawn:true_condition"
+      }
     }
   ]
 }

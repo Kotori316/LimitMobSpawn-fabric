@@ -3,29 +3,14 @@ import java.nio.file.Paths
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
-        maven { url = 'https://repo.spongepowered.org/maven' }
-        maven { url = 'https://maven.parchmentmc.org' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-        classpath 'org.parchmentmc:librarian:1.+'
-    }
-}
 plugins {
     id("maven-publish")
+    // https://maven.fabricmc.net/net/fabricmc/fabric-loom/
+    id 'fabric-loom' version "0.11-SNAPSHOT"
     id "com.matthewprenger.cursegradle" version "1.4.0"
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'org.spongepowered.mixin'
 
-version = '18.1'
+version = '18.1-fabric'
 group = 'com.kotori316' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'LimitMobSpawn'
 
@@ -35,53 +20,16 @@ println('Java: ' + System.getProperty('java.version') +
         ' JVM: ' + System.getProperty('java.vm.version') +
         '(' + System.getProperty('java.vendor') + ') ' +
         'Arch: ' + System.getProperty('os.arch'))
-minecraft {
-    mappings channel: 'parchment', version: project.parchmentMapping
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
+loom {
     runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property('mixin.env.remapRefMap', 'true')
-            property('mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg")
-            property("mixin.debug", "true")
-            property 'forge.logging.console.level', 'debug'
-            forceExit false
-
-            mods {
-                "limitmobspawn" {
-                    source sourceSets.main
-                }
+        it.configure {
+            client {
+                runDir = Boolean.parseBoolean(System.getenv("FABRIC_SERVER") ?: "false") ? "run-server" : "run"
+                programArgs(List.of("--username", "Kotori"))
             }
-        }
-
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'info'
-            forceExit false
-
-            mods {
-                "limitmobspawn" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'info'
-            property 'limit_mob_spawn_data_gen', 'true'
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'limitmobspawn', '--all', '--output', file('src/test/resources/'), '--existing', file('src/main/resources/')
-            forceExit false
-
-            mods {
-                "limitmobspawn" {
-                    source sourceSets.main
-                }
+            server {
+                runDir = "run-server"
             }
         }
     }
@@ -96,19 +44,26 @@ repositories {
 
 
 dependencies {
-    minecraft(project.forgeVersion)
-    // Mixin
-    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     // Test Dependencies.
-    final String JUPITER_VERSION = '5.7.1'
+    final String JUPITER_VERSION = '5.6.2'
     testImplementation(group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: JUPITER_VERSION)
     testImplementation(group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: JUPITER_VERSION)
     testRuntimeOnly(group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: JUPITER_VERSION)
-    testImplementation(group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.7.0')
+    testImplementation(group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.6.2')
 }
 
-mixin {
-    add sourceSets.main, "mixins.limit-mob-spawn.refmap.json"
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
 }
 
 test {
@@ -132,7 +87,6 @@ def jarAttributeMap = [
         "Implementation-Version"  : project.version,
         "Implementation-Vendor"   : "Kotori316",
         "Implementation-Timestamp": ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT),
-        "MixinConfigs"            : "limit-mob-spawn.mixins.json",
         'Automatic-Module-Name'   : 'limitmobspawn',
 ]
 jar {
@@ -140,27 +94,12 @@ jar {
         attributes(jarAttributeMap)
     }
 }
-task srcJar(type: Jar) {
-    from sourceSets.main.allSource
-    archiveClassifier.set('sources')
-}
-
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    archiveClassifier.set('deobf')
-    manifest {
-        attributes(jarAttributeMap)
-    }
-}
-artifacts {
-    archives srcJar, deobfJar
-}
 
 // Example configuration to allow publishing using the maven-publish task
 // This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('signJar')
+build.finalizedBy('signJar')
 
-task signJar(dependsOn: 'reobfJar') {
+task signJar(dependsOn: 'jar') {
     boolean executeCondition = project.hasProperty('keyStoreAlias') &&
             project.hasProperty('keyStore') &&
             project.hasProperty('keyStorePass')
@@ -180,8 +119,8 @@ task signJar(dependsOn: 'reobfJar') {
 }
 
 curseforge {
-    String v = project.forgeVersion
-    String minecraftVersion = v.substring(v.lastIndexOf(":") + 1).split("-")[0]
+    String v = project.fabric_version
+    String minecraftVersion = project.minecraft_version
     final File file = file("changelog.md")
     apiKey = project.hasProperty("curseforge_additional-enchanted-miner_key") ? getProperty("curseforge_additional-enchanted-miner_key") : ""
     project {
@@ -193,11 +132,10 @@ curseforge {
         addGameVersion '1.18.1'
         addGameVersion 'Forge'
         mainArtifact jar
-        addArtifact deobfJar
-        addArtifact srcJar
     }
     options {
         curseGradleOptions.debug = false // defaults to false
+        forgeGradleIntegration = false
         javaVersionAutoDetect = false
     }
 }
@@ -206,20 +144,12 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId = "LimitMobSpawn"
-            artifact srcJar {
-                archiveClassifier.set('sources')
-                archiveExtension.set('jar')
-            }
-            artifact deobfJar {
-                archiveClassifier.set('deobf')
-                archiveExtension.set('jar')
-            }
-            artifact jar
+            from components.java
             pom {
-                String v = project.forgeVersion
-                String minecraftVersion = v.substring(v.lastIndexOf(":") + 1).split("-")[0]
+                String v = project.fabric_version
+                String minecraftVersion = project.minecraft_version
                 name = archivesBaseName
-                description = "LimitMobSpawn for Minecraft $minecraftVersion, build with forge $v"
+                description = "LimitMobSpawn for Minecraft $minecraftVersion, build with Fabric $v"
                 url = 'https://github.com/Kotori316/LimitMobSpawn'
                 packaging = "jar"
             }
@@ -249,19 +179,9 @@ if (System.getProperty("idea.sync.active") == "true") {
     }
 }
 
-task copyToDir(type: Copy, dependsOn: "build") {
-    def PATH_NAME = "destination"
-    from(deobfJar.getArchiveFile())
-    into(file(java.util.Optional.ofNullable(System.getenv(PATH_NAME)).orElse(".")))
-    onlyIf {
-        System.getenv(PATH_NAME) != null &&
-                Files.exists(Paths.get(System.getenv(PATH_NAME)))
-    }
-}
-
 task copyToDrive(type: Copy, dependsOn: "build") {
     def PATH_NAME = "drive_path"
-    from(jar.getArchiveFile(), deobfJar.getArchiveFile(), srcJar.getArchiveFile())
+    from(remapJar.getArchiveFile())
     into(file(java.util.Optional.ofNullable(System.getenv(PATH_NAME)).orElse(".")))
     onlyIf {
         System.getenv(PATH_NAME) != null &&

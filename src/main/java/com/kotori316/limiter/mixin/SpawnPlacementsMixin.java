@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.kotori316.limiter.LMSEventHandler;
 import com.kotori316.limiter.LimitMobSpawn;
 
 @Mixin(SpawnPlacements.class)
@@ -27,12 +26,12 @@ public class SpawnPlacementsMixin {
         LimitMobSpawn.SpawnCheckResult checkResult = LimitMobSpawn.allowSpawning(world, pos, entityType, reason);
         if (checkResult == LimitMobSpawn.SpawnCheckResult.DENY) {
             if (reason != MobSpawnType.NATURAL)
-                LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LMSEventHandler.LMS_MARKER,
+                LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LimitMobSpawn.LMS_MARKER,
                     "SpawnPlacements#checkSpawnRules denied spawning of {} by {} at {}.", entityType, reason, pos);
             cir.setReturnValue(Boolean.FALSE);
         } else if (checkResult == LimitMobSpawn.SpawnCheckResult.FORCE) {
             if (reason != MobSpawnType.NATURAL)
-                LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LMSEventHandler.LMS_MARKER,
+                LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LimitMobSpawn.LMS_MARKER,
                     "SpawnPlacements#checkSpawnRules forced spawning of {} by {} at {}.", entityType, reason, pos);
             cir.setReturnValue(Boolean.TRUE);
         }

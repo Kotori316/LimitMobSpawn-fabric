@@ -11,22 +11,12 @@ import com.google.gson.JsonElement;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.kotori316.limiter.LimitMobSpawn;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = LimitMobSpawn.MOD_ID)
+@SuppressWarnings("unused") // Currently, no way to generate data files.
 public class LimitMobSpawnDataProvider {
-    @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
-        if (event.includeServer()) {
-            event.getGenerator().addProvider(new TestSpawnProvider(event.getGenerator()));
-        }
-    }
-
     private record TestSpawnProvider(DataGenerator dataGenerator) implements DataProvider {
 
         @Override

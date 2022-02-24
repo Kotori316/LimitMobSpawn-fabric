@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.kotori316.limiter.LMSEventHandler;
 import com.kotori316.limiter.LimitMobSpawn;
 
 @SuppressWarnings("DuplicatedCode")
@@ -30,11 +29,11 @@ public class NaturalSpawnerMixin {
     ) {
         LimitMobSpawn.SpawnCheckResult checkResult = LimitMobSpawn.allowSpawning(worldIn, pos, entityTypeIn, null);
         if (checkResult == LimitMobSpawn.SpawnCheckResult.DENY) {
-            LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LMSEventHandler.LMS_MARKER,
+            LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LimitMobSpawn.LMS_MARKER,
                 "NaturalSpawner#isSpawnPositionOk denied spawning of {} at {}.", entityTypeIn, pos);
             cir.setReturnValue(Boolean.FALSE);
         } else if (checkResult == LimitMobSpawn.SpawnCheckResult.FORCE) {
-            LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LMSEventHandler.LMS_MARKER,
+            LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LimitMobSpawn.LMS_MARKER,
                 "NaturalSpawner#isSpawnPositionOk forced spawning of {} at {}.", entityTypeIn, pos);
             cir.setReturnValue(Boolean.TRUE);
         }
@@ -49,11 +48,11 @@ public class NaturalSpawnerMixin {
     ) {
         LimitMobSpawn.SpawnCheckResult checkResult = LimitMobSpawn.allowSpawning(worldIn, pos, entityTypeIn, null);
         if (checkResult == LimitMobSpawn.SpawnCheckResult.DENY) {
-            LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LMSEventHandler.LMS_MARKER,
+            LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LimitMobSpawn.LMS_MARKER,
                 "NaturalSpawner#isValidEmptySpawnBlock denied spawning of {} at {}.", entityTypeIn, pos);
             cir.setReturnValue(Boolean.FALSE);
         } else if (checkResult == LimitMobSpawn.SpawnCheckResult.FORCE) {
-            LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LMSEventHandler.LMS_MARKER,
+            LimitMobSpawn.LOGGER.log(LimitMobSpawn.LOG_LEVEL, LimitMobSpawn.LMS_MARKER,
                 "NaturalSpawner#isValidEmptySpawnBlock forced spawning of {} at {}.", entityTypeIn, pos);
             cir.setReturnValue(Boolean.TRUE);
         }

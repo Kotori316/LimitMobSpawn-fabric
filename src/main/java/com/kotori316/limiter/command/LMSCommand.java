@@ -21,7 +21,7 @@ import com.kotori316.limiter.Config;
 import com.kotori316.limiter.LimitMobSpawn;
 import com.kotori316.limiter.SpawnConditionLoader;
 import com.kotori316.limiter.TestSpawn;
-import com.kotori316.limiter.capability.Caps;
+import com.kotori316.limiter.capability.CapsSaveData;
 import com.kotori316.limiter.capability.LMSConditionsHolder;
 import com.kotori316.limiter.capability.LMSHandler;
 import com.kotori316.limiter.capability.RuleType;
@@ -124,13 +124,13 @@ public class LMSCommand {
     @NotNull
     private static LMSHandler getLmsHandler(CommandContext<CommandSourceStack> context) {
         Level world = context.getSource().getLevel();
-        return world.getCapability(Caps.getLmsCapability()).orElseGet(LMSConditionsHolder::new);
+        return CapsSaveData.getFromWorld(world).orElseGet(LMSConditionsHolder::new);
     }
 
     private static List<LMSHandler> getAllLmsHandlers(CommandContext<CommandSourceStack> context) {
         List<LMSHandler> list = new ArrayList<>();
         for (Level world : context.getSource().getServer().getAllLevels()) {
-            world.getCapability(Caps.getLmsCapability()).ifPresent(list::add);
+            CapsSaveData.getFromWorld(world).ifPresent(list::add);
         }
         return list;
     }

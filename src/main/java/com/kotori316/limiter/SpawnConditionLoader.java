@@ -16,12 +16,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
@@ -42,7 +43,7 @@ import com.kotori316.limiter.conditions.Or;
 import com.kotori316.limiter.conditions.PositionLimit;
 import com.kotori316.limiter.conditions.RandomLimit;
 
-public class SpawnConditionLoader extends SimpleJsonResourceReloadListener {
+public class SpawnConditionLoader extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
     private static final Marker MARKER = MarkerManager.getMarker("SpawnConditionLoader");
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     private final Map<String, TestSpawn.Serializer<?>> serializers = new HashMap<>();
@@ -83,7 +84,7 @@ public class SpawnConditionLoader extends SimpleJsonResourceReloadListener {
         Set<TestSpawn> forceSet = new HashSet<>();
         for (JsonElement element : objectIn.values()) {
             JsonObject asObject = element.getAsJsonObject();
-            if (SKIP_CONDITION || CraftingHelper.processConditions(asObject, "conditions")) {
+            if (SKIP_CONDITION || ResourceConditions.objectMatchesConditions(asObject)) {
                 defaultSet.addAll(getValues(asObject.get(RuleType.DEFAULT.saveName())));
                 denySet.addAll(getValues(asObject.get(RuleType.DENY.saveName())));
                 forceSet.addAll(getValues(asObject.get(RuleType.FORCE.saveName())));
@@ -92,6 +93,11 @@ public class SpawnConditionLoader extends SimpleJsonResourceReloadListener {
         holder.setDefaultSet(defaultSet);
         holder.setDenySet(denySet);
         holder.setForceSet(forceSet);
+    }
+
+    @Override
+    public ResourceLocation getFabricId() {
+        return new ResourceLocation(LimitMobSpawn.MOD_ID, "condition_loader");
     }
 
     public LMSHandler getHolder() {

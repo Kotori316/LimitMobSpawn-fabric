@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "limitmobspawn",
+  "version": "${version}",
+  "name": "LimitMobSpawn",
+  "description": "LimitMobSpawn",
+  "authors": [
+    "Kotori316"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Kotori316",
+    "sources": "https://github.com/Kotori316/LimitMobSpawn",
+    "issues": "https://github.com/Kotori316/LimitMobSpawn/issues"
+  },
+  "license": "All rights reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.kotori316.limiter.LimitMobSpawn"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.12.0",
+    "fabric": "*",
+    "minecraft": "1.18.x"
+  }
+}

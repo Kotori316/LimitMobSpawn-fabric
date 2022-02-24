@@ -6,9 +6,8 @@ import java.util.Optional;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.util.INBTSerializable;
 
-public class SpawnerControl implements INBTSerializable<CompoundTag> {
+public class SpawnerControl {
     public static final String KEY_SPAWN_COUNT = "spawnCount";
     private int spawnCount = 0;
 
@@ -23,14 +22,12 @@ public class SpawnerControl implements INBTSerializable<CompoundTag> {
         this.spawnCount = spawnCount;
     }
 
-    @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putInt(KEY_SPAWN_COUNT, spawnCount);
         return nbt;
     }
 
-    @Override
     public void deserializeNBT(CompoundTag nbt) {
         setSpawnCount(nbt.getInt(KEY_SPAWN_COUNT));
     }

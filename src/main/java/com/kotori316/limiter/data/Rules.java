@@ -8,6 +8,8 @@ import java.util.Locale;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.fabricmc.fabric.api.resource.conditions.v1.DefaultResourceConditions;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -16,8 +18,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
-import net.minecraftforge.common.crafting.conditions.TrueCondition;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.kotori316.limiter.LimitMobSpawn;
@@ -81,8 +81,8 @@ class Rules {
         }
         {
             JsonArray conditions = new JsonArray();
-            conditions.add(TrueCondition.Serializer.INSTANCE.getJson(TrueCondition.INSTANCE));
-            object.add("conditions", conditions);
+            conditions.add(new TrueCondition.Provider().toJson());
+            object.add(ResourceConditions.CONDITIONS_KEY, conditions);
         }
         return object;
     }
@@ -114,8 +114,8 @@ class Rules {
         }
         {
             JsonArray conditions = new JsonArray();
-            conditions.add(TrueCondition.Serializer.INSTANCE.getJson(TrueCondition.INSTANCE));
-            object.add("conditions", conditions);
+            conditions.add(new TrueCondition.Provider().toJson());
+            object.add(ResourceConditions.CONDITIONS_KEY, conditions);
         }
         return object;
     }
@@ -129,8 +129,8 @@ class Rules {
         }
         {
             JsonArray conditions = new JsonArray();
-            conditions.add(TrueCondition.Serializer.INSTANCE.getJson(TrueCondition.INSTANCE));
-            object.add("conditions", conditions);
+            conditions.add(new TrueCondition.Provider().toJson());
+            object.add(ResourceConditions.CONDITIONS_KEY, conditions);
         }
         return object;
     }
@@ -196,8 +196,8 @@ class Rules {
         }
         {
             JsonArray conditions = new JsonArray();
-            conditions.add(ModLoadedCondition.Serializer.INSTANCE.getJson(new ModLoadedCondition("mining_dimension")));
-            object.add("conditions", conditions);
+            conditions.add(DefaultResourceConditions.allModsLoaded("mining_dimension").toJson());
+            object.add(ResourceConditions.CONDITIONS_KEY, conditions);
         }
         return object;
     }
@@ -242,8 +242,8 @@ class Rules {
         }
         {
             JsonArray conditions = new JsonArray();
-            conditions.add(ModLoadedCondition.Serializer.INSTANCE.getJson(new ModLoadedCondition("gaiadimension")));
-            object.add("conditions", conditions);
+            conditions.add(DefaultResourceConditions.allModsLoaded("gaiadimension").toJson());
+            object.add(ResourceConditions.CONDITIONS_KEY, conditions);
         }
         return object;
     }

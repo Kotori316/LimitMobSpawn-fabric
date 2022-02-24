@@ -1,6 +1,7 @@
 package com.kotori316.limiter.capability;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -10,14 +11,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.LazyOptional;
 
 import com.kotori316.limiter.SpawnConditionLoader;
 import com.kotori316.limiter.TestSpawn;
 
-public interface LMSHandler extends INBTSerializable<CompoundTag> {
+public interface LMSHandler {
     void addDefaultCondition(TestSpawn condition);
 
     void addDenyCondition(TestSpawn condition);
@@ -38,7 +36,6 @@ public interface LMSHandler extends INBTSerializable<CompoundTag> {
 
     SpawnerControl getSpawnerControl();
 
-    @Override
     default CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         Collector<Tag, ?, ListTag> arrayCollector = Collector.of(ListTag::new, ListTag::add, (l1, l2) -> {
@@ -52,7 +49,6 @@ public interface LMSHandler extends INBTSerializable<CompoundTag> {
         return nbt;
     }
 
-    @Override
     default void deserializeNBT(CompoundTag nbt) {
         for (RuleType ruleType : RuleType.values()) {
             nbt.getList(ruleType.saveName(), Tag.TAG_COMPOUND).stream()
@@ -63,19 +59,18 @@ public interface LMSHandler extends INBTSerializable<CompoundTag> {
         getSpawnerControl().deserializeNBT(nbt.getCompound("SpawnerControl"));
     }
 
-    static void registerCapability(RegisterCapabilitiesEvent event) {
-        event.register(LMSHandler.class);
-    }
-
-    static Stream<TestSpawn> getCombinedDefault(LMSHandler h1, LazyOptional<LMSHandler> h2) {
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    static Stream<TestSpawn> getCombinedDefault(LMSHandler h1, Optional<LMSHandler> h2) {
         return Stream.concat(h1.getDefaultConditions().stream(), h2.map(LMSHandler::getDefaultConditions).stream().flatMap(Collection::stream));
     }
 
-    static Stream<TestSpawn> getCombinedDeny(LMSHandler h1, LazyOptional<LMSHandler> h2) {
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    static Stream<TestSpawn> getCombinedDeny(LMSHandler h1, Optional<LMSHandler> h2) {
         return Stream.concat(h1.getDenyConditions().stream(), h2.map(LMSHandler::getDenyConditions).stream().flatMap(Collection::stream));
     }
 
-    static Stream<TestSpawn> getCombinedForce(LMSHandler h1, LazyOptional<LMSHandler> h2) {
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    static Stream<TestSpawn> getCombinedForce(LMSHandler h1, Optional<LMSHandler> h2) {
         return Stream.concat(h1.getForceConditions().stream(), h2.map(LMSHandler::getForceConditions).stream().flatMap(Collection::stream));
     }
 }

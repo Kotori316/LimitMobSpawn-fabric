@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import com.kotori316.limiter.capability.Caps;
+import com.kotori316.limiter.capability.CapsSaveData;
 import com.kotori316.limiter.capability.LMSHandler;
 import com.kotori316.limiter.capability.SpawnerControl;
 
@@ -31,8 +31,7 @@ public abstract class SpawnerMixin {
             // 4 is the default spawn count. If not 4, the spawner is modifies by others.
             lmsDefaultSpawnCount = spawnCount;
             if (lmsCacheSpawnCount == 0) {
-                serverLevel.getCapability(Caps.getLmsCapability())
-                    .resolve()
+                CapsSaveData.getFromWorld(serverLevel)
                     .map(LMSHandler::getSpawnerControl)
                     .flatMap(SpawnerControl::getSpawnCount)
                     .ifPresent(newCount -> spawnCount = newCount);
@@ -59,8 +58,7 @@ public abstract class SpawnerMixin {
             lmsDefaultMaxNearbyEntities = maxNearbyEntities;
 
             if (lmsCacheMaxNearbyEntities == 0) {
-                serverLevel.getCapability(Caps.getLmsCapability())
-                    .resolve()
+                CapsSaveData.getFromWorld(serverLevel)
                     .map(LMSHandler::getSpawnerControl)
                     .flatMap(SpawnerControl::getSpawnCount)
                     .ifPresent(newCount -> maxNearbyEntities = Math.max(newCount, lmsDefaultMaxNearbyEntities));

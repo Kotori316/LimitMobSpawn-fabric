@@ -11,11 +11,11 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import com.kotori316.limiter.LimitMobSpawn;
@@ -49,7 +49,7 @@ public class EntityLimit implements TestSpawn {
     @Override
     public String toString() {
         return "EntityLimit{" +
-            "type=" + type + '(' + type.getRegistryName() + ')' +
+            "type=" + type + '(' + Registry.ENTITY_TYPE.getKey(type) + ')' +
             '}';
     }
 
@@ -116,7 +116,7 @@ public class EntityLimit implements TestSpawn {
         @Override
         public Set<ResourceLocation> suggestions(String property, @Nullable SharedSuggestionProvider provider) {
             if (property.equals("entity")) {
-                return ForgeRegistries.ENTITIES.getKeys();
+                return Registry.ENTITY_TYPE.keySet();
             }
             return Collections.emptySet();
         }

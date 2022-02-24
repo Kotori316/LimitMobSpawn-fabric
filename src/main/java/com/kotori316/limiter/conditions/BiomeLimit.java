@@ -9,10 +9,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,15 +34,17 @@ public record BiomeLimit(@NotNull ResourceKey<Biome> biomeResourceKey) implement
 
     @Override
     public boolean test(BlockGetter worldIn, BlockPos pos, EntityType<?> entityTypeIn, @Nullable MobSpawnType reason) {
-        if (worldIn instanceof LevelReader worldReader) {
-            Biome biome = worldReader.getBiome(pos);
-            return test(biome);
+        if (worldIn instanceof ServerLevel serverLevel) {
+            Biome biome = serverLevel.getBiome(pos);
+            var name = serverLevel.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
+                .getKey(biome);
+            return test(name);
         }
         return false;
     }
 
-    public boolean test(Biome biome) {
-        return biomeResourceKey.location().equals(biome.getRegistryName());
+    boolean test(ResourceLocation biome) {
+        return biomeResourceKey.location().equals(biome);
     }
 
     @Override

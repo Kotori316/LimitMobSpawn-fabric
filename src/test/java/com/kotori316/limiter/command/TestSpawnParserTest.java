@@ -14,7 +14,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import javax.annotation.Nonnull;
 import net.minecraft.world.entity.MobSpawnType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -225,7 +224,6 @@ class TestSpawnParserTest extends BeforeAllTest {
         }
     }
 
-    @Nonnull
     private static Set<String> getSuggestions(String input) throws InterruptedException, ExecutionException {
         TestSpawnParser parser = new TestSpawnParser(new StringReader(input));
         assertThrows(CommandSyntaxException.class, parser::parse);
