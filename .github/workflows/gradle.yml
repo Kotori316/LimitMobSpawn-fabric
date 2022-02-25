@@ -23,8 +23,10 @@ jobs:
         run: ./gradlew javaToolchains checkCompileOption
       - name: Build with Gradle
         run: ./gradlew build
+      - name: Generate Data
+        run: ./gradlew runData
       - name: Check Artifacts
-        run: ls -al build/libs/
+        run: ls -al build/libs/ build/devlibs/
       - name: Upload failed test report
         if: failure()
         uses: actions/upload-artifact@v2
