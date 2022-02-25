@@ -94,9 +94,9 @@
       "type": "and"
     }
   ],
-  "conditions": [
+  "fabric:load_conditions": [
     {
-      "type": "forge:true"
+      "condition": "limitmobspawn:true_condition"
     }
   ]
 }

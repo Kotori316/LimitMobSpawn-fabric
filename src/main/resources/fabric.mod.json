@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "com.kotori316.limiter.LimitMobSpawn"
+    ],
+    "fabric-datagen": [
+      "com.kotori316.limiter.data.LimitMobSpawnDataProvider"
     ]
   },
   "mixins": [

@@ -26,10 +26,12 @@
       "type": "and"
     }
   ],
-  "conditions": [
+  "fabric:load_conditions": [
     {
-      "modid": "mining_dimension",
-      "type": "forge:mod_loaded"
+      "condition": "fabric:all_mods_loaded",
+      "values": [
+        "mining_dimension"
+      ]
     }
   ]
 }

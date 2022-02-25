@@ -32,6 +32,19 @@ loom {
             name "Server"
             runDir = "run-server"
         }
+        data {
+            client()
+            name "Data Generation"
+            //noinspection SpellCheckingInspection
+            vmArg "-Dfabric-api.datagen"
+            //noinspection SpellCheckingInspection
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/test/resources")}"
+            //noinspection SpellCheckingInspection
+            vmArg "-Dfabric-api.datagen.strict-validation"
+
+            ideConfigGenerated = true
+            runDir("run-server")
+        }
     }
 }
 
