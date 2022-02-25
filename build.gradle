@@ -113,7 +113,7 @@ curseforge {
     project {
         id = '449932'
         changelogType = 'markdown'
-        changelog = file.exists() ? file.text : "See https://github.com/Kotori316/LimitMobSpawn/commits/${BRANCH()} for change log." + System.lineSeparator() * 2 +
+        changelog = file.exists() ? file.text : "See https://github.com/Kotori316/LimitMobSpawn-fabric/commits/${BRANCH()} for change log." + System.lineSeparator() * 2 +
                 "For Minecraft $minecraftVersion, built with $v"
         releaseType = 'beta'
         addGameVersion '1.18.1'
@@ -138,7 +138,7 @@ publishing {
                 String minecraftVersion = project.minecraft_version
                 name = archivesBaseName
                 description = "LimitMobSpawn for Minecraft $minecraftVersion, build with Fabric $v"
-                url = 'https://github.com/Kotori316/LimitMobSpawn'
+                url = 'https://github.com/Kotori316/LimitMobSpawn-fabric'
                 packaging = "jar"
                 withXml {
                     (asNode() as Node).dependencies.'*'.findAll() { Node node ->
