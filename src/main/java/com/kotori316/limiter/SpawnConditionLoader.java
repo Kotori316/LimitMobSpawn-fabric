@@ -74,7 +74,7 @@ public class SpawnConditionLoader extends SimpleJsonResourceReloadListener imple
         TestSpawn.Serializer<?> put = this.serializers.put(serializer.getType(), serializer);
         if (put != null)
             throw new IllegalArgumentException(String.format("Duplicated keys: %s, TYPE: %s, Map: %s", serializer.getType(), serializer.getClass(), serializers));
-        LimitMobSpawn.LOGGER.debug(MARKER, "Registered a new serializer. {}", serializer.getClass().getName());
+        LimitMobSpawn.LOGGER.debug(MARKER, "Registered a new serializer. {}({})", serializer.getType(), serializer.getClass().getName());
     }
 
     @Override
@@ -82,12 +82,16 @@ public class SpawnConditionLoader extends SimpleJsonResourceReloadListener imple
         Set<TestSpawn> denySet = new HashSet<>();
         Set<TestSpawn> defaultSet = new HashSet<>();
         Set<TestSpawn> forceSet = new HashSet<>();
-        for (JsonElement element : objectIn.values()) {
+        for (var e : objectIn.entrySet()) {
+            JsonElement element = e.getValue();
             JsonObject asObject = element.getAsJsonObject();
             if (SKIP_CONDITION || ResourceConditions.objectMatchesConditions(asObject)) {
+                LimitMobSpawn.LOGGER.debug(MARKER, "Trying to load {}", e.getKey());
                 defaultSet.addAll(getValues(asObject.get(RuleType.DEFAULT.saveName())));
                 denySet.addAll(getValues(asObject.get(RuleType.DENY.saveName())));
                 forceSet.addAll(getValues(asObject.get(RuleType.FORCE.saveName())));
+            } else {
+                LimitMobSpawn.LOGGER.debug(MARKER, "Skipped loading of {}", e.getKey());
             }
         }
         holder.setDefaultSet(defaultSet);

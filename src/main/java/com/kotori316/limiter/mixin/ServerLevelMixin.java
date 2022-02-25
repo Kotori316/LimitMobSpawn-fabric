@@ -13,7 +13,7 @@ import com.kotori316.limiter.LimitMobSpawn;
 import static com.kotori316.limiter.LimitMobSpawn.LMS_MARKER;
 
 @Mixin(ServerLevel.class)
-public final class ServerLevelMixin {
+public abstract class ServerLevelMixin {
 
     /**
      * The last guard to prevent mob spawning.

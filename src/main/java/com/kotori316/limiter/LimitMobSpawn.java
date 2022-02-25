@@ -38,11 +38,11 @@ public class LimitMobSpawn implements ModInitializer {
     public void onInitialize() {
         ResourceConditions.register(TrueCondition.getConditionId(), new TrueCondition());
         TestSpawnArgument.registerArgumentType();
-        addLister();
+        addListener();
         addCommand();
     }
 
-    public void addLister() {
+    public void addListener() {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(SpawnConditionLoader.INSTANCE);
     }
 
