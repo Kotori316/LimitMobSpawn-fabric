@@ -35,9 +35,9 @@ public record BiomeLimit(@NotNull ResourceKey<Biome> biomeResourceKey) implement
     @Override
     public boolean test(BlockGetter worldIn, BlockPos pos, EntityType<?> entityTypeIn, @Nullable MobSpawnType reason) {
         if (worldIn instanceof ServerLevel serverLevel) {
-            Biome biome = serverLevel.getBiome(pos);
+            var biome = serverLevel.getBiome(pos);
             var name = serverLevel.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
-                .getKey(biome);
+                .getKey(biome.value());
             return test(name);
         }
         return false;
