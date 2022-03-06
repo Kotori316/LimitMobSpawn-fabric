@@ -12,7 +12,7 @@ plugins {
     id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
-version = '18.1-fabric'
+version = project.mod_version
 group = 'com.kotori316' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'LimitMobSpawn'
 
