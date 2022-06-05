@@ -5,14 +5,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.kotori316.limiter.LimitMobSpawn;
@@ -26,11 +24,10 @@ public final class LimitMobSpawnDataProvider implements DataGeneratorEntrypoint 
     private record TestSpawnProvider(DataGenerator dataGenerator) implements DataProvider {
 
         @Override
-        public void run(HashCache cache) throws IOException {
-            Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        public void run(CachedOutput cachedOutput) throws IOException {
             Path parent = dataGenerator.getOutputFolder().resolve("data/" + LimitMobSpawn.MOD_ID + "/" + LimitMobSpawn.MOD_ID);
             for (Pair<String, JsonElement> pair : getData()) {
-                DataProvider.save(gson, cache, pair.getRight(), parent.resolve(pair.getLeft() + ".json"));
+                DataProvider.saveStable(cachedOutput, pair.getRight(), parent.resolve(pair.getLeft() + ".json"));
             }
         }
 
