@@ -116,7 +116,7 @@ jar {
     }
 }
 
-static def BRANCH() { return "1.18-fabric" }
+static def BRANCH() { return "1.19-fabric" }
 
 curseforge {
     String v = project.fabric_version
