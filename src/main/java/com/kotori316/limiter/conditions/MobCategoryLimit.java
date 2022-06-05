@@ -14,7 +14,7 @@ import com.kotori316.limiter.TestSpawn;
 public record MobCategoryLimit(MobCategory classification) implements TestSpawn {
     public static final TestSpawn.Serializer<MobCategoryLimit> SERIALIZER = StringLimitSerializer.fromFunction(
         MobCategoryLimit::classification, MobCategoryLimit::new, MobCategory::getName,
-        s -> MobCategory.byName(s.toLowerCase(Locale.ROOT)), "classification", "classification",
+        s -> MobCategory.valueOf(s.toUpperCase(Locale.ROOT)), "classification", "classification",
         MobCategory.values()
     );
 

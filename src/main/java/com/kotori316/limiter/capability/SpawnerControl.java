@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 public class SpawnerControl {
     public static final String KEY_SPAWN_COUNT = "spawnCount";
@@ -39,10 +39,10 @@ public class SpawnerControl {
             '}';
     }
 
-    public List<TextComponent> getMessages() {
+    public List<Component> getMessages() {
         return Arrays.asList(
-            new TextComponent("SpawnerControl"),
-            new TextComponent("SpawnCount: " + getSpawnCount())
+            Component.literal("SpawnerControl"),
+            Component.literal("SpawnCount: " + getSpawnCount())
         );
     }
 }

@@ -3,7 +3,7 @@ package com.kotori316.limiter;
 import java.util.Optional;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.BlockPos;
@@ -47,7 +47,7 @@ public class LimitMobSpawn implements ModInitializer {
     }
 
     public void addCommand() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> LMSCommand.register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, environment) -> LMSCommand.register(dispatcher));
     }
 
     public static SpawnCheckResult allowSpawning(BlockGetter worldIn, BlockPos pos,

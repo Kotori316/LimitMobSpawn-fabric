@@ -13,7 +13,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +45,7 @@ public class LMSCommand {
                 .executes(context -> {
                     LMSHandler lmsHandler = getLmsHandler(context);
                     if (lmsHandler.getDefaultConditions().isEmpty() && lmsHandler.getForceConditions().isEmpty() && lmsHandler.getDenyConditions().isEmpty())
-                        context.getSource().sendFailure(new TextComponent("No Rules found."));
+                        context.getSource().sendFailure(Component.literal("No Rules found."));
                     sendMessage(context, "Defaults", Sets.union(lmsHandler.getDefaultConditions(), SpawnConditionLoader.INSTANCE.getHolder().getDefaultConditions()));
                     sendMessage(context, "Denies", Sets.union(lmsHandler.getDenyConditions(), SpawnConditionLoader.INSTANCE.getHolder().getDenyConditions()));
                     sendMessage(context, "Forces", Sets.union(lmsHandler.getForceConditions(), SpawnConditionLoader.INSTANCE.getHolder().getForceConditions()));
@@ -60,7 +60,7 @@ public class LMSCommand {
                     List<LMSHandler> list = getAllLmsHandlers(context);
                     TestSpawn rule = context.getArgument("rule", TestSpawn.class);
                     list.forEach(lmsHandler -> ruleType.add(lmsHandler, rule));
-                    context.getSource().sendSuccess(new TextComponent(String.format("Added %s to %s.", rule, ruleType.saveName())), true);
+                    context.getSource().sendSuccess(Component.literal(String.format("Added %s to %s.", rule, ruleType.saveName())), true);
                     return Command.SINGLE_SUCCESS;
                 })));
             }
@@ -72,7 +72,7 @@ public class LMSCommand {
             for (RuleType ruleType : RuleType.values()) {
                 remove.then(Commands.literal(ruleType.saveName()).executes(context -> {
                     getAllLmsHandlers(context).forEach(ruleType::removeAll);
-                    context.getSource().sendSuccess(new TextComponent("Cleared " + ruleType.getCommandName()), true);
+                    context.getSource().sendSuccess(Component.literal("Cleared " + ruleType.getCommandName()), true);
                     return Command.SINGLE_SUCCESS;
                 }));
             }
@@ -86,7 +86,7 @@ public class LMSCommand {
                 .then(Commands.argument("spawnCount", IntegerArgumentType.integer(0)).executes(context -> {
                     Integer spawnCount = context.getArgument("spawnCount", Integer.class);
                     getAllLmsHandlers(context).forEach(l -> l.getSpawnerControl().setSpawnCount(spawnCount));
-                    context.getSource().sendSuccess(new TextComponent("Changed spawnCount to " + spawnCount), true);
+                    context.getSource().sendSuccess(Component.literal("Changed spawnCount to " + spawnCount), true);
                     return Command.SINGLE_SUCCESS;
                 })));
             spawner.then(Commands.literal("query").executes(context -> {
@@ -117,8 +117,8 @@ public class LMSCommand {
     }
 
     private static void sendMessage(CommandContext<CommandSourceStack> context, String s, Set<TestSpawn> conditions) {
-        context.getSource().sendSuccess(new TextComponent(s + "=" + conditions.size()), true);
-        conditions.stream().map(Object::toString).map(TextComponent::new).forEach(c -> context.getSource().sendSuccess(c, true));
+        context.getSource().sendSuccess(Component.literal(s + "=" + conditions.size()), true);
+        conditions.stream().map(Object::toString).map(Component::literal).forEach(c -> context.getSource().sendSuccess(c, true));
     }
 
     @NotNull
