@@ -1,8 +1,8 @@
 {
   "deny": [
     {
-      "classification": "monster",
-      "type": "classification"
+      "type": "classification",
+      "classification": "monster"
     }
   ],
   "fabric:load_conditions": [

@@ -1,29 +1,29 @@
 {
   "deny": [
     {
+      "type": "and",
       "values": [
         {
           "type": "all"
         },
         {
-          "dim": "mining_dimension:mining",
-          "type": "dimension"
+          "type": "dimension",
+          "dim": "mining_dimension:mining"
         },
         {
+          "type": "or",
           "values": [
             {
-              "entity": "minecraft:zombie",
-              "type": "entity"
+              "type": "entity",
+              "entity": "minecraft:zombie"
             },
             {
-              "entity": "minecraft:skeleton",
-              "type": "entity"
+              "type": "entity",
+              "entity": "minecraft:skeleton"
             }
-          ],
-          "type": "or"
+          ]
         }
-      ],
-      "type": "and"
+      ]
     }
   ],
   "fabric:load_conditions": [
