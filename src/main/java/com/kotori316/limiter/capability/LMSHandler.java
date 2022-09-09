@@ -37,6 +37,8 @@ public interface LMSHandler {
 
     SpawnerControl getSpawnerControl();
 
+    MobNumberLimit getMobNumberLimit();
+
     default CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         Collector<Tag, ?, ListTag> arrayCollector = Collector.of(ListTag::new, ListTag::add, (l1, l2) -> {
@@ -47,6 +49,7 @@ public interface LMSHandler {
             nbt.put(ruleType.saveName(), ruleType.getRules(this).stream().map(t -> t.to(NbtOps.INSTANCE)).collect(arrayCollector));
         }
         nbt.put("SpawnerControl", getSpawnerControl().serializeNBT());
+        nbt.put("MobNumberLimit", getMobNumberLimit().serializeNBT());
         return nbt;
     }
 
@@ -58,6 +61,7 @@ public interface LMSHandler {
                 .forEach(t -> ruleType.add(this, t));
         }
         getSpawnerControl().deserializeNBT(nbt.getCompound("SpawnerControl"));
+        getMobNumberLimit().deserializeNBT(nbt.getCompound("MobNumberLimit"));
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

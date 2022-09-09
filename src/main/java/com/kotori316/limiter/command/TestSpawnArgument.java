@@ -28,10 +28,7 @@ import com.kotori316.limiter.SpawnConditionLoader;
 import com.kotori316.limiter.TestSpawn;
 
 public class TestSpawnArgument implements ArgumentType<TestSpawn> {
-    /**
-     * The function was moved to {@link com.kotori316.limiter.mixin.ArgumentTypesMixin mixin}
-     * because of a need to register the object in private fields in {@link net.minecraft.commands.synchronization.ArgumentTypeInfos the class}.
-     */
+
     public static void registerArgumentType() {
         ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(LimitMobSpawn.MOD_ID, "rule"),
             TestSpawnArgument.class, SingletonArgumentInfo.contextFree(TestSpawnArgument::new));

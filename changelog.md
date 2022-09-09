@@ -9,6 +9,10 @@
 
 [action details]: https://github.com/Kotori316/LimitMobSpawn/actions/workflows/gradle.yml
 
+## v19.2-fabric
+
+* 1.19.2
+
 ## v18.2-fabric
 
 * 1.18.2

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import com.kotori316.limiter.capability.CapsSaveData;
 import com.kotori316.limiter.capability.LMSHandler;
 import com.kotori316.limiter.command.LMSCommand;
+import com.kotori316.limiter.command.MobCategoryArgument;
 import com.kotori316.limiter.command.TestSpawnArgument;
 import com.kotori316.limiter.data.TrueCondition;
 
@@ -38,6 +39,7 @@ public class LimitMobSpawn implements ModInitializer {
     public void onInitialize() {
         ResourceConditions.register(TrueCondition.getConditionId(), new TrueCondition());
         TestSpawnArgument.registerArgumentType();
+        MobCategoryArgument.registerArgumentType();
         addListener();
         addCommand();
     }
