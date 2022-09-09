@@ -15,11 +15,15 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.Nullable;
 
+import com.kotori316.limiter.LimitMobSpawn;
 import com.kotori316.limiter.SpawnConditionLoader;
 import com.kotori316.limiter.TestSpawn;
 
@@ -29,7 +33,8 @@ public class TestSpawnArgument implements ArgumentType<TestSpawn> {
      * because of a need to register the object in private fields in {@link net.minecraft.commands.synchronization.ArgumentTypeInfos the class}.
      */
     public static void registerArgumentType() {
-        // Noop.
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(LimitMobSpawn.MOD_ID, "rule"),
+            TestSpawnArgument.class, SingletonArgumentInfo.contextFree(TestSpawnArgument::new));
     }
 
     @Override
