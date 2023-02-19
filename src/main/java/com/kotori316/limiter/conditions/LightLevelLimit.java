@@ -41,7 +41,7 @@ public record LightLevelLimit(LightLayer layer, int level) implements TestSpawn 
 
     @Override
     public String contentShort() {
-        return layer.toString().toLowerCase() + "@" + level;
+        return layer.toString().toLowerCase(Locale.ROOT) + "@" + level;
     }
 
     private static class Serializer extends TestSpawn.Serializer<LightLevelLimit> {

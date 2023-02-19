@@ -72,6 +72,6 @@ public final class MobNumberLimit {
     @Nullable
     @SuppressWarnings("ConstantConditions") // Actually, the return value might be null.
     private static MobCategory get(String s) {
-        return MobCategory.valueOf(s.toUpperCase());
+        return MobCategory.valueOf(s.toUpperCase(Locale.ROOT));
     }
 }

@@ -37,7 +37,7 @@ public final class MobCategoryArgument implements ArgumentType<MobCategory> {
     public MobCategory parse(StringReader reader) throws CommandSyntaxException {
         String string = reader.readUnquotedString();
         try {
-            return MobCategory.valueOf(string.toUpperCase());
+            return MobCategory.valueOf(string.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
             throw ERROR_INVALID_VALUE.create(e.getMessage());
         }
@@ -45,7 +45,7 @@ public final class MobCategoryArgument implements ArgumentType<MobCategory> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        var values = Stream.of(MobCategory.values()).map(MobCategory::getName).map(String::toLowerCase);
+        var values = Stream.of(MobCategory.values()).map(MobCategory::getName).map(r -> r.toLowerCase(Locale.ROOT));
         return SharedSuggestionProvider.suggest(values, builder);
     }
 
