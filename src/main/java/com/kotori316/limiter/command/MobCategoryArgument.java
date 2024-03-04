@@ -1,10 +1,6 @@
 package com.kotori316.limiter.command;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
-
+import com.kotori316.limiter.LimitMobSpawn;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -19,7 +15,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.MobCategory;
 
-import com.kotori316.limiter.LimitMobSpawn;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 public final class MobCategoryArgument implements ArgumentType<MobCategory> {
     public static final DynamicCommandExceptionType ERROR_INVALID_VALUE = new DynamicCommandExceptionType(object -> Component.literal("Bad MobCategory type. %s".formatted(object)));

@@ -1,25 +1,20 @@
 package com.kotori316.limiter.conditions;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.kotori316.limiter.LimitMobSpawn;
+import com.kotori316.limiter.TestSpawn;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.BlockGetter;
 import org.jetbrains.annotations.Nullable;
 
-import com.kotori316.limiter.LimitMobSpawn;
-import com.kotori316.limiter.TestSpawn;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EntityLimit implements TestSpawn {
     public static final TestSpawn.Serializer<EntityLimit> SERIALIZER = new Serializer();
@@ -49,7 +44,7 @@ public class EntityLimit implements TestSpawn {
     @Override
     public String toString() {
         return "EntityLimit{" +
-            "type=" + type + '(' + Registry.ENTITY_TYPE.getKey(type) + ')' +
+            "type=" + type + '(' + BuiltInRegistries.ENTITY_TYPE.getKey(type) + ')' +
             '}';
     }
 
@@ -116,7 +111,7 @@ public class EntityLimit implements TestSpawn {
         @Override
         public Set<ResourceLocation> suggestions(String property, @Nullable SharedSuggestionProvider provider) {
             if (property.equals("entity")) {
-                return Registry.ENTITY_TYPE.keySet();
+                return BuiltInRegistries.ENTITY_TYPE.keySet();
             }
             return Collections.emptySet();
         }

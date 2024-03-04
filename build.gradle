@@ -1,3 +1,6 @@
+import com.kotori316.plugin.cf.CallVersionCheckFunctionTask
+import com.kotori316.plugin.cf.CallVersionFunctionTask
+
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.ZoneId
@@ -6,10 +9,12 @@ import java.time.format.DateTimeFormatter
 import java.util.stream.Collectors
 
 plugins {
+    id("signing")
     id("maven-publish")
     // https://maven.fabricmc.net/net/fabricmc/fabric-loom/
-    id 'fabric-loom' version "0.13-SNAPSHOT"
+    id 'fabric-loom' version "1.5-SNAPSHOT"
     id "com.matthewprenger.cursegradle" version "1.4.0"
+    id("com.kotori316.plugin.cf").version("2.3")
 }
 
 version = project.mod_version
@@ -88,9 +93,6 @@ processResources {
 
 test {
     useJUnitPlatform()
-    int cpus = Runtime.getRuntime().availableProcessors()
-    printf("CPU: %d, Memory: %fMB%n", cpus, Runtime.getRuntime().totalMemory() / Math.pow(2, 20))
-    // setMaxParallelForks(cpus > 1 ? cpus - 1 : 1)
     systemProperty('limit_mob_spawn_data_gen', 'true')
     testLogging {
         events "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
@@ -116,13 +118,13 @@ jar {
     }
 }
 
-static def BRANCH() { return "1.19-fabric" }
+static def BRANCH() { return "1.20-fabric" }
 
 curseforge {
     String v = project.fabric_version
     String minecraftVersion = project.minecraft_version
     final File file = file("changelog.md")
-    apiKey = project.findProperty("curseforge_additional-enchanted-miner_key") ?: ""
+    apiKey = project.findProperty("curseforge_additional-enchanted-miner_key") ?: System.getenv("CURSE_TOKEN") ?: ""
     project {
         id = '449932'
         changelogType = 'markdown'
@@ -138,6 +140,27 @@ curseforge {
         curseGradleOptions.debug = false // defaults to false
         forgeGradleIntegration = false
         javaVersionAutoDetect = false
+    }
+}
+
+signing {
+    sign(publishing.publications)
+    sign(tasks.remapJar, tasks.remapSourcesJar)
+}
+
+boolean hasGpgSignature = project.hasProperty("signing.keyId") &&
+        project.hasProperty("signing.password") &&
+        project.hasProperty("signing.secretKeyRingFile")
+
+tasks.withType(Sign).configureEach {
+    it.onlyIf {
+        hasGpgSignature
+    }
+}
+
+tasks.withType(AbstractPublishToMaven).configureEach {
+    if (hasGpgSignature) {
+        it.dependsOn(":signRemapJar")
     }
 }
 
@@ -171,6 +194,24 @@ publishing {
             }
         }
     }
+}
+
+tasks.register("registerVersion", CallVersionFunctionTask.class) {
+    functionEndpoint = readVersionFunctionEndpoint(project)
+    gameVersion = project.property("minecraft_version").toString()
+    platform = "fabric"
+    platformVersion = project.property("fabric_version") as String
+    modName = "limitmobspawn"
+    changelog = "For ${mcVersion()}"
+    homepage = "https://www.curseforge.com/minecraft/mc-mods/limit-mob-spawn"
+}
+
+tasks.register("checkReleaseVersion", CallVersionCheckFunctionTask.class) {
+    gameVersion = project.property("minecraft_version").toString()
+    platform = "fabric"
+    modName = "limitmobspawn"
+    version = project.version.toString()
+    failIfExists = false
 }
 
 ////////////////

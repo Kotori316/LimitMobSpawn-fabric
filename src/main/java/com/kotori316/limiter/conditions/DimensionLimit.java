@@ -1,12 +1,10 @@
 package com.kotori316.limiter.conditions;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.kotori316.limiter.LimitMobSpawn;
+import com.kotori316.limiter.TestSpawn;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -15,8 +13,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import com.kotori316.limiter.LimitMobSpawn;
-import com.kotori316.limiter.TestSpawn;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public record DimensionLimit(ResourceKey<Level> type) implements TestSpawn {
     public static final TestSpawn.Serializer<DimensionLimit> SERIALIZER = new DimensionSerializer();
@@ -27,7 +26,7 @@ public record DimensionLimit(ResourceKey<Level> type) implements TestSpawn {
     }
 
     public static DimensionLimit fromName(String name) {
-        return new DimensionLimit(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(name)));
+        return new DimensionLimit(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name)));
     }
 
     @Override
@@ -77,7 +76,7 @@ public record DimensionLimit(ResourceKey<Level> type) implements TestSpawn {
 
         @Override
         public ResourceKey<Level> fromString(String s) {
-            return ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(s));
+            return ResourceKey.create(Registries.DIMENSION, new ResourceLocation(s));
         }
 
         @Override

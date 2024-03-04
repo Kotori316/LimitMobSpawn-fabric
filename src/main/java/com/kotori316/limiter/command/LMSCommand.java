@@ -1,11 +1,14 @@
 package com.kotori316.limiter.command;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-
 import com.google.common.collect.Sets;
+import com.kotori316.limiter.Config;
+import com.kotori316.limiter.LimitMobSpawn;
+import com.kotori316.limiter.SpawnConditionLoader;
+import com.kotori316.limiter.TestSpawn;
+import com.kotori316.limiter.capability.CapsSaveData;
+import com.kotori316.limiter.capability.LMSConditionsHolder;
+import com.kotori316.limiter.capability.LMSHandler;
+import com.kotori316.limiter.capability.RuleType;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -18,14 +21,10 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import com.kotori316.limiter.Config;
-import com.kotori316.limiter.LimitMobSpawn;
-import com.kotori316.limiter.SpawnConditionLoader;
-import com.kotori316.limiter.TestSpawn;
-import com.kotori316.limiter.capability.CapsSaveData;
-import com.kotori316.limiter.capability.LMSConditionsHolder;
-import com.kotori316.limiter.capability.LMSHandler;
-import com.kotori316.limiter.capability.RuleType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
 public class LMSCommand {
 
@@ -61,7 +60,7 @@ public class LMSCommand {
                     List<LMSHandler> list = getAllLmsHandlers(context);
                     TestSpawn rule = context.getArgument("rule", TestSpawn.class);
                     list.forEach(lmsHandler -> ruleType.add(lmsHandler, rule));
-                    context.getSource().sendSuccess(Component.literal(String.format("Added %s to %s.", rule, ruleType.saveName())), true);
+                    context.getSource().sendSuccess(() -> Component.literal(String.format("Added %s to %s.", rule, ruleType.saveName())), true);
                     return Command.SINGLE_SUCCESS;
                 })));
             }
@@ -73,7 +72,7 @@ public class LMSCommand {
             for (RuleType ruleType : RuleType.values()) {
                 remove.then(Commands.literal(ruleType.saveName()).executes(context -> {
                     getAllLmsHandlers(context).forEach(ruleType::removeAll);
-                    context.getSource().sendSuccess(Component.literal("Cleared " + ruleType.getCommandName()), true);
+                    context.getSource().sendSuccess(() -> Component.literal("Cleared " + ruleType.getCommandName()), true);
                     return Command.SINGLE_SUCCESS;
                 }));
             }
@@ -87,12 +86,12 @@ public class LMSCommand {
                 .then(Commands.argument("spawnCount", IntegerArgumentType.integer(0)).executes(context -> {
                     Integer spawnCount = context.getArgument("spawnCount", Integer.class);
                     getAllLmsHandlers(context).forEach(l -> l.getSpawnerControl().setSpawnCount(spawnCount));
-                    context.getSource().sendSuccess(Component.literal("Changed spawnCount to " + spawnCount), true);
+                    context.getSource().sendSuccess(() -> Component.literal("Changed spawnCount to " + spawnCount), true);
                     return Command.SINGLE_SUCCESS;
                 })));
             spawner.then(Commands.literal("query").executes(context -> {
                 LMSHandler lmsHandler = getLmsHandler(context);
-                lmsHandler.getSpawnerControl().getMessages().forEach(s -> context.getSource().sendSuccess(s, true));
+                lmsHandler.getSpawnerControl().getMessages().forEach(s -> context.getSource().sendSuccess(() -> s, true));
                 return Command.SINGLE_SUCCESS;
             }));
             literal.then(spawner);
@@ -106,13 +105,13 @@ public class LMSCommand {
                         MobCategory category = context.getArgument("category", MobCategory.class);
                         Integer limit = context.getArgument("limit", Integer.class);
                         getAllLmsHandlers(context).forEach(l -> l.getMobNumberLimit().set(category, limit));
-                        context.getSource().sendSuccess(Component.literal("Set %s limit to %s".formatted(category, limit)), true);
+                        context.getSource().sendSuccess(() -> Component.literal("Set %s limit to %s".formatted(category, limit)), true);
                         return Command.SINGLE_SUCCESS;
                     })))
             );
             categoryLimit.then(Commands.literal("query").executes(context -> {
                 var message = getLmsHandler(context).getMobNumberLimit().getMessage();
-                message.ifPresent(m -> context.getSource().sendSuccess(m, true));
+                message.ifPresent(m -> context.getSource().sendSuccess(() -> m, true));
                 return Command.SINGLE_SUCCESS;
             }));
             literal.then(categoryLimit);
@@ -138,8 +137,8 @@ public class LMSCommand {
     }
 
     private static void sendMessage(CommandContext<CommandSourceStack> context, String s, Set<TestSpawn> conditions) {
-        context.getSource().sendSuccess(Component.literal(s + "=" + conditions.size()), true);
-        conditions.stream().map(Object::toString).map(Component::literal).forEach(c -> context.getSource().sendSuccess(c, true));
+        context.getSource().sendSuccess(() -> Component.literal(s + "=" + conditions.size()), true);
+        conditions.stream().map(Object::toString).map(Component::literal).forEach(c -> context.getSource().sendSuccess(() -> c, true));
     }
 
     @NotNull

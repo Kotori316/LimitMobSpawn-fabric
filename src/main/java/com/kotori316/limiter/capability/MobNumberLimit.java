@@ -1,17 +1,14 @@
 package com.kotori316.limiter.capability;
 
-import java.util.EnumMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.MobCategory;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class MobNumberLimit {
     private EnumMap<MobCategory, Integer> map = new EnumMap<>(MobCategory.class);

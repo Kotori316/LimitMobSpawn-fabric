@@ -1,12 +1,10 @@
 package com.kotori316.limiter.conditions;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.kotori316.limiter.LimitMobSpawn;
+import com.kotori316.limiter.TestSpawn;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -17,8 +15,9 @@ import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.kotori316.limiter.LimitMobSpawn;
-import com.kotori316.limiter.TestSpawn;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public record BiomeLimit(@NotNull ResourceKey<Biome> biomeResourceKey) implements TestSpawn {
     public static final TestSpawn.Serializer<BiomeLimit> SERIALIZER = new BiomeSerializer();
@@ -29,14 +28,14 @@ public record BiomeLimit(@NotNull ResourceKey<Biome> biomeResourceKey) implement
     }
 
     public BiomeLimit(@NotNull ResourceLocation biome) {
-        this(ResourceKey.create(Registry.BIOME_REGISTRY, biome));
+        this(ResourceKey.create(Registries.BIOME, biome));
     }
 
     @Override
     public boolean test(BlockGetter worldIn, BlockPos pos, EntityType<?> entityTypeIn, @Nullable MobSpawnType reason) {
         if (worldIn instanceof ServerLevel serverLevel) {
             var biome = serverLevel.getBiome(pos);
-            var name = serverLevel.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
+            var name = serverLevel.registryAccess().registryOrThrow(Registries.BIOME)
                 .getKey(biome.value());
             return test(name);
         }
@@ -75,13 +74,13 @@ public record BiomeLimit(@NotNull ResourceKey<Biome> biomeResourceKey) implement
             if (provider == null || !property.equals(saveKey()))
                 return Collections.emptySet();
             return provider.registryAccess()
-                .registryOrThrow(Registry.BIOME_REGISTRY)
+                .registryOrThrow(Registries.BIOME)
                 .keySet();
         }
 
         @Override
         public ResourceKey<Biome> fromString(String s) {
-            return ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(s));
+            return ResourceKey.create(Registries.BIOME, new ResourceLocation(s));
         }
 
         @Override

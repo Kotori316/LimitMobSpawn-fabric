@@ -1,12 +1,7 @@
 package com.kotori316.limiter.conditions;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
+import com.kotori316.limiter.LimitMobSpawn;
+import com.kotori316.limiter.TestSpawn;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -18,8 +13,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LightLayer;
 import org.jetbrains.annotations.Nullable;
 
-import com.kotori316.limiter.LimitMobSpawn;
-import com.kotori316.limiter.TestSpawn;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public record LightLevelLimit(LightLayer layer, int level) implements TestSpawn {
     public static final TestSpawn.Serializer<LightLevelLimit> SERIALIZER = new Serializer();
@@ -81,7 +77,8 @@ public record LightLevelLimit(LightLayer layer, int level) implements TestSpawn 
         @Override
         public Set<String> possibleValues(String property, boolean suggesting, @Nullable SharedSuggestionProvider provider) {
             return switch (property) {
-                case "layer" -> Arrays.stream(LightLayer.values()).map(LightLayer::toString).collect(Collectors.toSet());
+                case "layer" ->
+                    Arrays.stream(LightLayer.values()).map(LightLayer::toString).collect(Collectors.toSet());
                 case "level" -> IntStream.rangeClosed(0, 14).mapToObj(Integer::toString).collect(Collectors.toSet());
                 default -> Set.of();
             };

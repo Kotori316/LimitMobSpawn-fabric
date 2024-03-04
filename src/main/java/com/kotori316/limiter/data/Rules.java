@@ -1,16 +1,14 @@
 package com.kotori316.limiter.data;
 
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.kotori316.limiter.LimitMobSpawn;
+import com.kotori316.limiter.TestSpawn;
+import com.kotori316.limiter.conditions.*;
 import net.fabricmc.fabric.api.resource.conditions.v1.DefaultResourceConditions;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -20,18 +18,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.kotori316.limiter.LimitMobSpawn;
-import com.kotori316.limiter.TestSpawn;
-import com.kotori316.limiter.conditions.All;
-import com.kotori316.limiter.conditions.And;
-import com.kotori316.limiter.conditions.Creator;
-import com.kotori316.limiter.conditions.DimensionLimit;
-import com.kotori316.limiter.conditions.EntityLimit;
-import com.kotori316.limiter.conditions.LightLevelLimit;
-import com.kotori316.limiter.conditions.MobCategoryLimit;
-import com.kotori316.limiter.conditions.MobSpawnTypeLimit;
-import com.kotori316.limiter.conditions.Or;
-import com.kotori316.limiter.conditions.RandomLimit;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 @SuppressWarnings("unused")
 class Rules {
@@ -187,7 +177,7 @@ class Rules {
         {
             object.add("deny", as(
                 All.getInstance()
-                    .and(new DimensionLimit(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation("mining_dimension:mining"))))
+                    .and(new DimensionLimit(ResourceKey.create(Registries.DIMENSION, new ResourceLocation("mining_dimension:mining"))))
                     .and(new Or(
                         new EntityLimit(EntityType.ZOMBIE),
                         new EntityLimit(EntityType.SKELETON)
@@ -207,7 +197,7 @@ class Rules {
         JsonObject object = new JsonObject();
         {
             object.add("deny", as(
-                new DimensionLimit(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation("gaiadimension:gaia_dimension")))
+                new DimensionLimit(ResourceKey.create(Registries.DIMENSION, new ResourceLocation("gaiadimension:gaia_dimension")))
                     .and(new Or(
                         new EntityLimit("gaiadimension:agate_golem            ".trim()),
                         new EntityLimit("gaiadimension:ancient_lagrahk        ".trim()),
