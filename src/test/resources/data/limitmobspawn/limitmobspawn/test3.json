@@ -1,4 +1,9 @@
 {
+  "fabric:load_conditions": [
+    {
+      "condition": "limitmobspawn:true_condition"
+    }
+  ],
   "_comment": "Conditions in each category are combined by OR.",
   "default": [
     {
@@ -38,11 +43,6 @@
     {
       "type": "dimension",
       "dim": "minecraft:the_end"
-    }
-  ],
-  "fabric:load_conditions": [
-    {
-      "condition": "limitmobspawn:true_condition"
     }
   ],
   "force": [

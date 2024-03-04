@@ -1,13 +1,13 @@
 {
+  "fabric:load_conditions": [
+    {
+      "condition": "limitmobspawn:true_condition"
+    }
+  ],
   "deny": [
     {
       "type": "classification",
       "classification": "monster"
-    }
-  ],
-  "fabric:load_conditions": [
-    {
-      "condition": "limitmobspawn:true_condition"
     }
   ]
 }
